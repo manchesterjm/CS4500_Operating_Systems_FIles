@@ -10,6 +10,31 @@ This is a CS4500 (Operating Systems) course repository containing C programming 
 - Process management and system calls
 - Python assignments for operating systems concepts
 
+## Coding Standards
+
+All C code in this repository follows the **STYLE_GUIDE.md** conventions. Key standards:
+
+### File Naming
+- **C source files**: lowercase_with_underscores.c (e.g., `list.c`, `print_other.c`)
+- **Header files**: lowercase_with_underscores.h (e.g., `list.h`)
+- **Documentation**: ALL CAPS with extension (e.g., `README.txt`, `README.md`)
+- **Makefiles**: Capitalized `Makefile` (standard convention)
+
+### Code Style
+- **Indentation**: 4 spaces for user-space C, tabs for kernel modules (Linux kernel style)
+- **Line length**: Maximum 100 characters
+- **Braces**: K&R style for user-space (opening brace on same line), Linux kernel style for modules (opening brace on next line)
+- **Comments**: Explain WHY, not WHAT; all functions must have comment blocks
+- **Memory**: Always check malloc/calloc return values; free all allocated memory; verify with valgrind
+
+### Function Conventions
+- Use descriptive names with verb_noun pattern: `create_list()`, `add_to_list()`
+- Keep functions focused (<50 lines ideal)
+- Validate inputs at function entry (guard clauses)
+- Use early returns for error conditions
+
+See **STYLE_GUIDE.md** for complete coding standards and examples.
+
 ## Project Structure
 
 ### project_01: Linked List Implementation
