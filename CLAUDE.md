@@ -210,16 +210,40 @@ wsl bash -c "cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500/project_01 && \
   clang-format -i list.c"
 ```
 
+**Kernel module linting with sparse** (requires kernel headers setup):
+```bash
+# Build kernel module with sparse static analysis
+wsl bash -c "cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500/project_02/part_1 && make C=2"
+
+# C=1 checks only re-compiled files, C=2 checks all files
+```
+
 #### Code Quality Standards
 - **Zero warnings**: All user-space C code must compile with `-Wall -Wextra -Wpedantic -Wformat=2 -Wshadow`
 - **cppcheck clean**: No issues reported by cppcheck static analyzer
+- **Sparse clean**: Kernel modules must pass sparse checking (`make C=2`) with zero warnings
 - **Const correctness**: Function parameters that don't modify input should use `const`
+- **RCU correctness**: Kernel code accessing RCU-protected pointers must use proper `rcu_dereference()` and locking
 - **No memory leaks**: Verify with valgrind (when available)
 
-#### Known Limitations
-- Kernel modules cannot be linted with standard gcc/cppcheck as they require Linux kernel headers
-- Kernel modules should be built with `make` to check for compilation errors
-- Use `sparse` or kernel-specific checkers for kernel module analysis if needed
+#### Kernel Module Linting Setup (One-Time)
+
+WSL2 doesn't provide kernel headers for its custom kernel, so we use generic Ubuntu kernel headers:
+
+```bash
+# Install required packages
+sudo apt-get update
+sudo apt-get install -y build-essential sparse linux-headers-generic
+
+# Create symlink to kernel headers
+sudo mkdir -p /lib/modules/$(uname -r)
+sudo ln -s /usr/src/linux-headers-6.8.0-87-generic /lib/modules/$(uname -r)/build
+
+# Verify setup
+ls -la /lib/modules/$(uname -r)/build
+```
+
+After setup, kernel modules can be compiled and analyzed with sparse.
 
 ### Original Development Environment
 Original coursework was done on a VM:

@@ -39,12 +39,15 @@ int print_other_init(void) {
     printk(KERN_INFO "print_other: Target Process: %s (PID: %d, State: %u)\n",
            task->comm, task->pid, task->__state);
 
-    // Traverse parent hierarchy safely
-    while (task->parent && task->pid != 1) {  // Stop at PID 1 (init/systemd)
-        task = task->parent;
+    // Traverse parent hierarchy safely with RCU protection
+    struct task_struct *parent;
+    rcu_read_lock();
+    while ((parent = rcu_dereference(task->parent)) && task->pid != 1) {  // Stop at PID 1 (init/systemd)
+        task = parent;
         printk(KERN_INFO "print_other: Parent Process: %s (PID: %d, State: %u)\n",
                task->comm, task->pid, task->__state);
     }
+    rcu_read_unlock();
 
     return 0;
 }
