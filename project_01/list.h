@@ -32,12 +32,12 @@ typedef struct List {
  */
 list *createlist(void);
 
-/* 
+/*
  * Allocates a new node and copies the string from item to this node
  * (using malloc, strlen, and strncpy or strdup). Adds this new node
  * to the end of the list ll. Returns 0 if successful, non-zero otherwise.
  */
-int addtolist(list *ll, char *item);
+int addtolist(list *ll, const char *item);
 
 /* 
  * Removes the head of the list ll (and moves the head of ll to the next node

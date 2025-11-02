@@ -16,7 +16,7 @@ list *createlist(void) {
 }
 
 // Adds a new node containing the string item to the end of the list
-int addtolist(list *ll, char *item) {
+int addtolist(list *ll, const char *item) {
     if (ll == NULL || item == NULL) { // we have an error condition here
         return -1;
     }
