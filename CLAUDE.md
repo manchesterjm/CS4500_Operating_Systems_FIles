@@ -186,12 +186,40 @@ git commit -m "message"
 git push
 ```
 
-### Linting with Clang
+### Code Quality and Linting
+
+All C code is analyzed with multiple static analysis tools via WSL Ubuntu:
+
+#### Running Linters
+
+**gcc with strict warnings** (for user-space C code):
 ```bash
-# Run clang linter on C files
-clang --analyze project_01/list.c
-clang-format -i project_01/list.c  # Format code
+wsl bash -c "cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500/project_01 && \
+  gcc -Wall -Wextra -Wpedantic -Wformat=2 -Wshadow -c list.c -o /tmp/list.o"
 ```
+
+**cppcheck static analyzer** (comprehensive checking):
+```bash
+wsl bash -c "cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500/project_01 && \
+  cppcheck --enable=all --suppress=missingIncludeSystem list.c list_test.c"
+```
+
+**clang-format** (code formatting):
+```bash
+wsl bash -c "cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500/project_01 && \
+  clang-format -i list.c"
+```
+
+#### Code Quality Standards
+- **Zero warnings**: All user-space C code must compile with `-Wall -Wextra -Wpedantic -Wformat=2 -Wshadow`
+- **cppcheck clean**: No issues reported by cppcheck static analyzer
+- **Const correctness**: Function parameters that don't modify input should use `const`
+- **No memory leaks**: Verify with valgrind (when available)
+
+#### Known Limitations
+- Kernel modules cannot be linted with standard gcc/cppcheck as they require Linux kernel headers
+- Kernel modules should be built with `make` to check for compilation errors
+- Use `sparse` or kernel-specific checkers for kernel module analysis if needed
 
 ### Original Development Environment
 Original coursework was done on a VM:
