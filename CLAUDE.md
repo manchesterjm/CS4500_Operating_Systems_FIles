@@ -10,6 +10,34 @@ This is a CS4500 (Operating Systems) course repository containing C programming 
 - Process management and system calls
 - Python assignments for operating systems concepts
 
+**Repository**: https://github.com/manchesterjm/CS4500_Operating_Systems_FIles
+**Authors**: Josh Manchester and Ronan Hella
+**Course**: CS4500 - Operating Systems
+
+### Code Quality Status
+
+All code in this repository has been linted and passes strict quality standards:
+
+✅ **User-Space C Code** (project_01):
+- gcc with `-Wall -Wextra -Wpedantic -Wformat=2 -Wshadow`: **0 warnings**
+- cppcheck static analysis: **0 issues**
+- Const correctness: **Applied**
+
+✅ **Kernel Modules** (project_02):
+- part_1 (hello.c): sparse clean - **0 warnings**
+- part_2 (print_self.c): sparse clean - **0 warnings**
+- part_3 (print_other.c): sparse clean - **0 warnings**
+- RCU synchronization: **Properly implemented**
+
+### Recent Improvements
+
+1. **Style Guide**: Created comprehensive C style guide (STYLE_GUIDE.md) adapted from industry standards
+2. **File Naming**: Standardized all files to follow lowercase_with_underscores convention
+3. **Const Correctness**: Added `const` qualifiers to function parameters that don't modify input
+4. **Kernel RCU**: Fixed address space warnings by implementing proper RCU read-side critical sections
+5. **Build System**: Created .gitignore to exclude build artifacts from version control
+6. **Documentation**: Comprehensive linting and build instructions for both user-space and kernel code
+
 ## Coding Standards
 
 All C code in this repository follows the **STYLE_GUIDE.md** conventions. Key standards:
@@ -257,3 +285,155 @@ When working with C code in this repository:
 2. Free all dynamically allocated memory in proper order (strings before nodes)
 3. Use valgrind to check for memory leaks when testing
 4. For kernel modules, printk messages help debug without user-space tools
+
+## Git Workflow
+
+### Repository Information
+- **Remote**: https://github.com/manchesterjm/CS4500_Operating_Systems_FIles.git
+- **Branch**: master
+- **Author**: Josh Manchester (manchesterjm@gmail.com)
+
+### Committing Changes
+
+When making changes, follow these steps:
+
+```bash
+# Check status
+git status
+
+# Stage files
+git add <files>
+
+# Commit with descriptive message
+git commit -m "Brief description
+
+Detailed explanation of changes:
+- What was changed
+- Why it was changed
+- Impact of changes
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+
+# Push to GitHub
+git push origin master
+```
+
+### Before Committing Code
+
+1. **Run linters** on all changed files:
+   - User-space C: `gcc -Wall -Wextra -Wpedantic` (0 warnings)
+   - User-space C: `cppcheck --enable=all` (0 issues)
+   - Kernel modules: `make C=2` (0 sparse warnings)
+
+2. **Test compilation**:
+   - User-space: `make` in project_01 (must succeed)
+   - Kernel modules: `make` in project_02/part_* (must succeed)
+
+3. **Verify functionality** (if applicable):
+   - Run executables to ensure they work
+   - Check kernel module loading/unloading
+
+4. **Check git status**: Ensure only intended files are staged
+
+## Testing Procedures
+
+### User-Space Code (project_01)
+
+```bash
+cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500/project_01
+
+# Build
+make
+
+# Run tests
+./list_test
+
+# Check for memory leaks (if valgrind available)
+valgrind --leak-check=full ./list_test
+
+# Clean up
+make clean
+```
+
+### Kernel Modules (project_02)
+
+**Note**: Kernel modules should be tested in a VM or test environment, not production systems.
+
+```bash
+cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500/project_02/part_1
+
+# Build with sparse checking
+make C=2
+
+# Load module (in VM with sudo)
+sudo insmod hello.ko
+
+# Check kernel log
+sudo dmesg -T | tail -20
+
+# Unload module
+sudo rmmod hello
+
+# Clean up
+make clean
+```
+
+## Troubleshooting
+
+### Kernel Module Build Fails
+
+If kernel module compilation fails with "No such file or directory" for `/lib/modules/*/build`:
+
+```bash
+# Verify symlink exists
+ls -la /lib/modules/$(uname -r)/build
+
+# If missing, recreate symlink
+sudo mkdir -p /lib/modules/$(uname -r)
+sudo ln -s /usr/src/linux-headers-6.8.0-87-generic /lib/modules/$(uname -r)/build
+```
+
+### WSL Compilation Issues
+
+If compilation fails in WSL:
+
+```bash
+# Ensure you're accessing via /mnt/c path
+cd /mnt/c/Users/manch/OneDrive/Desktop/CS4500
+
+# Check gcc is installed
+gcc --version
+
+# Check make is installed
+make --version
+```
+
+### Sparse Warnings
+
+If sparse reports warnings:
+
+1. Read the warning carefully - sparse catches kernel-specific issues
+2. Common issues:
+   - Address space annotations (use `rcu_dereference()` for RCU pointers)
+   - Missing `__user` or `__kernel` annotations
+   - Incorrect locking patterns
+3. Refer to Linux kernel documentation for proper patterns
+
+## Additional Resources
+
+- **Style Guide**: See STYLE_GUIDE.md for complete C coding conventions
+- **Linux Kernel Docs**: https://www.kernel.org/doc/html/latest/
+- **Sparse Tool**: https://sparse.docs.kernel.org/
+- **RCU Documentation**: https://www.kernel.org/doc/Documentation/RCU/
+
+## Summary
+
+This repository demonstrates OS concepts through practical C programming:
+- User-space data structures with proper memory management
+- Linux kernel modules with correct synchronization primitives
+- Professional coding standards and comprehensive testing
+- Complete linting infrastructure for code quality assurance
+
+All code follows industry best practices and passes strict static analysis checks.
